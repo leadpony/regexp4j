@@ -20,6 +20,8 @@ package org.leadpony.regexp4j;
  */
 interface PatternVisitor {
 
+    PatternVisitor EMPTY_VISITOR = new PatternVisitor() { };
+
     default void visitAlternation() {
     }
 

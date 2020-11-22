@@ -65,7 +65,7 @@ public final class RegExp {
         Set<RegExpFlag> flagSet = RegExpFlag.parse(flags);
         this.source = pattern;
         this.flags = flagSet;
-        this.pattern = translate(getSource(), flagSet);
+        this.pattern = translatePattern(getSource(), flagSet);
     }
 
     /**
@@ -246,13 +246,13 @@ public final class RegExp {
      * @return a translated pattern instance.
      * @throws SyntaxError if syntax error was found in the pattern.
      */
-    static Pattern translate(String pattern, Set<RegExpFlag> flags) {
+    static Pattern translatePattern(String pattern, Set<RegExpFlag> flags) {
         PatternTranslator translator = createTranslator(flags);
-        compile(pattern, flags, translator);
+        parsePattern(pattern, flags, translator);
         return translator.getPattern();
     }
 
-    static void compile(String pattern, Set<RegExpFlag> flags, PatternVisitor visitor) {
+    static void parsePattern(String pattern, Set<RegExpFlag> flags, PatternVisitor visitor) {
         InputSource source = new BmpInputSource(pattern);
         BmpPatternParser parser = new BmpPatternParser(source, visitor);
         parser.parse();

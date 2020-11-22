@@ -33,7 +33,7 @@ public class PatternTranslatorTest {
     @EnumSource(ValidPattern.class)
     public void shouldTranslatePatternAsExpected(ValidPattern pattern) {
         Set<RegExpFlag> flags = Collections.emptySet();
-        Pattern translated = RegExp.translate(pattern.get(), flags);
+        Pattern translated = RegExp.translatePattern(pattern.get(), flags);
         assertThat(translated.toString()).isEqualTo(pattern.getTranslated());
     }
 }
