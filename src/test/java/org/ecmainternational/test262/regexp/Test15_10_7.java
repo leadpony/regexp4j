@@ -464,4 +464,155 @@ public class Test15_10_7 {
         String[] expected = {"javascript", "script"};
         assertThat(actual).isEqualTo(expected);
     }
+
+    @Test
+    @DisplayName("15.10.2.7_A5_T2")
+    public void A5_T2() {
+        RegExp re = new RegExp("java(script)?");
+        String[] actual = re.exec("state: java and javascript are vastly different");
+        String[] expected = {"java", null};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A5_T3")
+    public void A5_T3() {
+        RegExp re = new RegExp("java(script)?");
+        boolean actual = re.test("state: both Java and JavaScript used in web development");
+        assertThat(actual).isFalse();
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A5_T4")
+    public void A5_T4() {
+        RegExp re = new RegExp("cd?e");
+        String[] actual = re.exec("abcdef");
+        String[] expected = {"cde"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A5_T5")
+    public void A5_T5() {
+        RegExp re = new RegExp("cdx?e");
+        String[] actual = re.exec("abcdef");
+        String[] expected = {"cde"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A5_T6")
+    public void A5_T6() {
+        RegExp re = new RegExp("o?pqrst");
+        String[] actual = re.exec("pqrstuvw");
+        String[] expected = {"pqrst"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A5_T7")
+    public void A5_T7() {
+        RegExp re = new RegExp("x?y?z?");
+        String[] actual = re.exec("abcd");
+        String[] expected = {""};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A5_T8")
+    public void A5_T8() {
+        RegExp re = new RegExp("x?ay?bz?c");
+        String[] actual = re.exec("abcd");
+        String[] expected = {"abc"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A5_T9")
+    public void A5_T9() {
+        RegExp re = new RegExp("b?b?b?b");
+        String[] actual = re.exec("abbbbc");
+        String[] expected = {"bbbb"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A5_T10")
+    public void A5_T10() {
+        RegExp re = new RegExp("ab?c?d?x?y?z");
+        String[] actual = re.exec("123az789");
+        String[] expected = {"az"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A5_T11")
+    public void A5_T11() {
+        RegExp re = new RegExp("\\??\\??\\??\\??\\??");
+        String[] actual = re.exec("?????");
+        String[] expected = {"?????"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A5_T12")
+    public void A5_T12() {
+        RegExp re = new RegExp(".?.?.?.?.?.?.?");
+        String[] actual = re.exec("test");
+        String[] expected = {"test"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A6_T1")
+    public void A6_T1() {
+        RegExp re = new RegExp("b{2,}c");
+        String[] actual = re.exec("aaabbbbcccddeeeefffff");
+        String[] expected = {"bbbbc"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A6_T2")
+    public void A6_T2() {
+        RegExp re = new RegExp("b{8,}c");
+        boolean actual = re.test("aaabbbbcccddeeeefffff");
+        assertThat(actual).isFalse();
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A6_T3")
+    public void A6_T3() {
+        RegExp re = new RegExp("\\d{1,}");
+        String[] actual = re.exec("wqe456646dsff");
+        String[] expected = {"456646"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A6_T4")
+    public void A6_T4() {
+        RegExp re = new RegExp("(123){1,}");
+        String[] actual = re.exec("123123");
+        String[] expected = {"123123","123"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A6_T5")
+    public void A6_T5() {
+        RegExp re = new RegExp("(123){1,}x\\1");
+        String[] actual = re.exec("123123x123");
+        String[] expected = {"123123x123","123"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.7_A6_T6")
+    public void A6_T6() {
+        RegExp re = new RegExp("x{1,2}x{1,}");
+        String[] actual = re.exec("xxxxxxx");
+        String[] expected = {"xxxxxxx"};
+        assertThat(actual).isEqualTo(expected);
+    }
 }
