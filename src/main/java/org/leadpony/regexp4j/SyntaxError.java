@@ -23,19 +23,77 @@ package org.leadpony.regexp4j;
 @SuppressWarnings("serial")
 public class SyntaxError extends RuntimeException {
 
+    private final String description;
+    private final String pattern;
+    private final int index;
+
     /**
-     * Constructs a new {@code SyntaxError} without a detail message.
+     * Constructs a new {@code SyntaxError} with the specified description.
+     *
+     * @param description the description of the error
+     * @param pattern     the erroneous pattern
+     * @param index       the approximate index in the pattern of the error, or -1
+     *                    if the index is not known
      */
-    public SyntaxError() {
+    public SyntaxError(String description, String pattern, int index) {
+        this.description = description;
+        this.pattern = pattern;
+        this.index = index;
+    }
+
+    SyntaxError(String description, String pattern, int index, Throwable cause) {
+        super(null, cause);
+        this.description = description;
+        this.pattern = pattern;
+        this.index = index;
     }
 
     /**
-     * Constructs a new {@code SyntaxError} with the specified detail message.
+     * Returns the description of the error.
      *
-     * @param message the detail message of this error. The detail message can be
-     *                retrieved later by calling {@link #getMessage()} method.
+     * @return the description of the error
      */
-    public SyntaxError(String message) {
-        super(message);
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Returns the erroneous regular expression pattern or flags.
+     *
+     * @return the erroneous pattern or flags.
+     */
+    public String getPattern() {
+        return pattern;
+    }
+
+    /**
+     * Retutns the error index.
+     *
+     * @return the approximate index in the pattern of the error, or -1 if the index
+     *         is not known
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * {@inheritDoc}}
+     */
+    @Override
+    public String getMessage() {
+        final String description = getDescription();
+        if (description == null) {
+            return null;
+        }
+        StringBuilder builder = new StringBuilder(description);
+        builder.append('\n').append(getPattern()).append('\n');
+        final int index = getIndex();
+        if (index >= 0) {
+            for (int i = 0; i < index; i++) {
+                builder.append(' ');
+            }
+            builder.append('^');
+        }
+        return builder.toString();
     }
 }

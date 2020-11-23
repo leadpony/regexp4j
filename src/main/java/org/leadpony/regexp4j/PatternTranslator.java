@@ -52,6 +52,7 @@ class PatternTranslator implements PatternVisitor {
      * Returns the translated pattern.
      *
      * @return the translated pattern.
+     * @throws PatternSyntaxException if the compilation failed.
      */
     Pattern getPattern() {
         return Pattern.compile(builder.toString(), options);

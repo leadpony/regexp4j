@@ -62,15 +62,16 @@ abstract class BasePatternParser {
         source.reset();
     }
 
-    protected final SyntaxError syntaxError() {
-        return new SyntaxError();
-    }
-
     protected final SyntaxError syntaxError(String message) {
-        return new SyntaxError(message);
+        return new SyntaxError(message, source.toString(), source.index());
     }
 
     protected final SyntaxError earlyError(String message) {
         return syntaxError(message);
+    }
+
+    protected final SyntaxError internalError(Throwable cause) {
+        return new SyntaxError(Message.thatInternalErrorOccurred(),
+                source.toString(), source.index(), cause);
     }
 }

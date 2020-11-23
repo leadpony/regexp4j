@@ -25,6 +25,9 @@ import java.util.ResourceBundle;
  */
 enum Message {
     UNEXPECTED_END,
+    UNEXPECTED_CHAR,
+
+    // group
     UNTERMINATED_GROUP,
     INVALID_GROUP,
     INVALID_CAPTURING_GROUP_NAME,
@@ -39,14 +42,20 @@ enum Message {
     QUANTIFIER_BOUNDS_OUT_OF_ORDER,
 
     // escape
-    INVALID_UNICODE_ESCAPE_SEQUENCE,
+    INVALID_CONTROL_ESCAPE_SEQUENCE,
+    INVALID_CONTROL_LETTER,
     INVALID_HEX_ESCAPE_SEQUENCE,
     DIGIT_FOLLOWS_NULL_ESCAPE,
+    UNSUPPORTED_ESCAPE_SEQUENCE,
+    INVALID_UNICODE_ESCAPE_SEQUENCE,
 
-    // character class range
-    UNTERMINATED_CHARACTER_CLASS_RANGE,
-    INVALID_CHARACTER_CLASS_RANGE,
-    CHARACER_CLASS_RANGE_OUT_OF_ORDER,
+    // character class
+    UNTERMINATED_CHARACTER_CLASS,
+    INVALID_CHARACTER_CLASS,
+    CHARACER_CLASS_OUT_OF_ORDER,
+    INVALID_ESCAPE_IN_CHARACTER_CLASS,
+
+    INVALID_SURROGATE_PAIR,
 
     // flags
     INVALID_FLAGS,
@@ -59,6 +68,10 @@ enum Message {
 
     static String thatPatternEndsWith(char c) {
         return UNEXPECTED_END.format(c);
+    }
+
+    static String thatUnexpectedCharIsFound() {
+        return UNEXPECTED_CHAR.message();
     }
 
     static String thatGroupIsUnterminated() {
@@ -101,8 +114,14 @@ enum Message {
         return QUANTIFIER_BOUNDS_OUT_OF_ORDER.message();
     }
 
-    static String thatUnicodeEscapeSequenceIsInvalid() {
-        return INVALID_UNICODE_ESCAPE_SEQUENCE.message();
+    // escapes
+
+    static String thatControlEscapeSequenceIsInvalid() {
+        return INVALID_CONTROL_ESCAPE_SEQUENCE.message();
+    }
+
+    static String thatControlLetterIsInvalid(char c) {
+        return INVALID_CONTROL_LETTER.format(c);
     }
 
     static String thatHexEscapeSequenceIsInvalid() {
@@ -113,17 +132,37 @@ enum Message {
         return DIGIT_FOLLOWS_NULL_ESCAPE.format(c);
     }
 
+    static String thatEscapeSequenceIsUnsupported() {
+        return UNSUPPORTED_ESCAPE_SEQUENCE.message();
+    }
+
+    static String thatUnicodeEscapeSequenceIsInvalid() {
+        return INVALID_UNICODE_ESCAPE_SEQUENCE.message();
+    }
+
+    // character class
+
     static String thatCharacterClassIsUnterminated() {
-        return UNTERMINATED_CHARACTER_CLASS_RANGE.message();
+        return UNTERMINATED_CHARACTER_CLASS.message();
     }
 
     static String thatCharacterClassRangeIsInvalid() {
-        return INVALID_CHARACTER_CLASS_RANGE.message();
+        return INVALID_CHARACTER_CLASS.message();
     }
 
     static String thatCharacterClassRangeIsOutOfOrder() {
-        return CHARACER_CLASS_RANGE_OUT_OF_ORDER.message();
+        return CHARACER_CLASS_OUT_OF_ORDER.message();
     }
+
+    static String thatEscapeSequenceInCharacterClassIsInvalid() {
+        return INVALID_ESCAPE_IN_CHARACTER_CLASS.message();
+    }
+
+    static String thatSurrogatePairIsInvalid() {
+        return INVALID_SURROGATE_PAIR.message();
+    }
+
+    // flags
 
     static String thatFlagsAreInvalid(String flags) {
         return INVALID_FLAGS.format(flags);
@@ -132,6 +171,8 @@ enum Message {
     static String thatFlagIsUnsupported(char flag) {
         return UNSUPPORTED_FLAG.format(flag);
     }
+
+    // others
 
     static String thatInternalErrorOccurred() {
         return INTERNAL_ERROR.message();

@@ -52,6 +52,7 @@ public class RegExpTest {
         });
 
         assertThat(thrown).isInstanceOf(SyntaxError.class);
+        assertThat(thrown.getMessage()).isNotNull();
         LOG.info(thrown.getMessage());
     }
 

@@ -43,10 +43,13 @@ enum RegExpFlag {
 
         EnumSet<RegExpFlag> result = EnumSet.noneOf(RegExpFlag.class);
         final int len = flags.length();
-        for (int i = 0; i < len; i++) {
-            RegExpFlag flag = parseFlag(flags.charAt(i));
-            if (result.contains(flag)) {
-                throw new SyntaxError(Message.thatFlagsAreInvalid(flags));
+        for (int index = 0; index < len; index++) {
+            char c = flags.charAt(index);
+            RegExpFlag flag = parseFlag(c);
+            if (flag == null) {
+                throw new SyntaxError(Message.thatFlagIsUnsupported(c), flags, index);
+            } else if (result.contains(flag)) {
+                throw new SyntaxError(Message.thatFlagsAreInvalid(flags), flags, index);
             }
             result.add(flag);
         }
@@ -57,8 +60,8 @@ enum RegExpFlag {
      * Parses a letter in the flags.
      *
      * @param flag a letter in the flags
-     * @return {@code RegExpFlag} object if {@code flag} is supported
-     * @throws SyntaxError if {@code flag} is unsupported
+     * @return {@code RegExpFlag} object if {@code flag} is supported or
+     *         {@code null} if not supported.
      */
     private static RegExpFlag parseFlag(char flag) {
         switch (flag) {
@@ -75,7 +78,7 @@ enum RegExpFlag {
         case 'y':
             return STICKY;
         default:
-            throw new SyntaxError(Message.thatFlagIsUnsupported(flag));
+            return null;
         }
     }
 }

@@ -18,6 +18,7 @@ package org.leadpony.regexp4j;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * A {@code RegExp} object contains a regular expression and the associated
@@ -249,7 +250,12 @@ public final class RegExp {
     static Pattern translatePattern(String pattern, Set<RegExpFlag> flags) {
         PatternTranslator translator = createTranslator(flags);
         parsePattern(pattern, flags, translator);
-        return translator.getPattern();
+        try {
+            return translator.getPattern();
+        } catch (PatternSyntaxException e) {
+            throw new SyntaxError(Message.thatInternalErrorOccurred(),
+                    pattern, -1, e);
+        }
     }
 
     static void parsePattern(String pattern, Set<RegExpFlag> flags, PatternVisitor visitor) {

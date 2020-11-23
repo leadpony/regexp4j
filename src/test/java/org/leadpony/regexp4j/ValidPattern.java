@@ -33,6 +33,7 @@ public enum ValidPattern {
 
     CAPRUING_GROUP("(abc)"),
     NAMED_CAPTURING_GROUP("(?<name1>abc)"),
+    NAMED_CAPTURING_GROUP_WITH_ESCAPE("(?<\\u0041>abc)", "(?<A>abc)"),
     NONCAPTURING_GROUP("(?:abc)"),
 
     ZERO_OR_ONE("a?"),

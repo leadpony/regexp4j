@@ -84,6 +84,11 @@ final class BmpInputSource implements InputSource {
     }
 
     @Override
+    public int index() {
+        return pos;
+    }
+
+    @Override
     public void mark() {
         lastMarkedPos = pos;
     }
@@ -93,5 +98,10 @@ final class BmpInputSource implements InputSource {
         if (lastMarkedPos >= 0) {
             pos = lastMarkedPos;
         }
+    }
+
+    @Override
+    public String toString() {
+        return input.toString();
     }
 }

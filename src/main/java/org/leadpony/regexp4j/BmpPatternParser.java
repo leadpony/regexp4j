@@ -64,7 +64,7 @@ class BmpPatternParser extends BasePatternParser {
         try {
             pattern();
         } catch (NoSuchElementException e) {
-            throw syntaxError(Message.thatInternalErrorOccurred());
+            throw internalError(e);
         }
     }
 
@@ -72,7 +72,7 @@ class BmpPatternParser extends BasePatternParser {
     private void pattern() {
         disjunction();
         if (hasNext()) {
-            throw syntaxError();
+            throw unexpectedChar(peek());
         }
         checkCapturingNumber();
         checkGroupReferences();
@@ -219,11 +219,7 @@ class BmpPatternParser extends BasePatternParser {
         if (c == '\\') {
             next();
             if (hasNext()) {
-                if (atomEscape()) {
-                    return true;
-                } else {
-                    throw syntaxError();
-                }
+                return atomEscape();
             } else {
                 throw syntaxError(Message.thatPatternEndsWith('\\'));
             }
@@ -292,6 +288,8 @@ class BmpPatternParser extends BasePatternParser {
      * the StringValue of the RegExpIdentifierName of this production's GroupName.
      * </li>
      * </ul>
+     * @return always {@code true}
+     * @throws SyntaxError if escape sequence is not supported.
      */
     @Production("AtomEscape")
     @RequireNext
@@ -317,7 +315,7 @@ class BmpPatternParser extends BasePatternParser {
             }
         }
 
-        return false;
+        throw syntaxError(Message.thatEscapeSequenceIsUnsupported());
     }
 
     /**
@@ -335,14 +333,8 @@ class BmpPatternParser extends BasePatternParser {
 
         if (peek() == 'c') {
             next();
-            if (hasNext()) {
-                result = controlLetter();
-                // controlLetter() calls our handler
-                if (result >= 0) {
-                    return result;
-                }
-            }
-            throw syntaxError();
+            // controlLetter() calls our handler
+            return controlLetter();
         }
 
         if (peek() == '0') {
@@ -400,15 +392,24 @@ class BmpPatternParser extends BasePatternParser {
         return value;
     }
 
+    /**
+     * Parses a control letter
+     *
+     * @return a controller character.
+     * @throws SyntaxError if there is no controller letter.
+     */
     @Production("ControlLetter")
-    @RequireNext
     private int controlLetter() {
-        if (isControlLetter(peek())) {
-            final int c = next();
-            visitor.visitControlLetter((char) c);
-            return c % 32;
+        if (hasNext()) {
+            final int c = peek();
+            if (isControlLetter(c)) {
+                next();
+                visitor.visitControlLetter((char) c);
+                return c % 32;
+            }
+            throw syntaxError(Message.thatControlLetterIsInvalid((char) c));
         }
-        return -1;
+        throw syntaxError(Message.thatControlEscapeSequenceIsInvalid());
     }
 
     /**
@@ -496,7 +497,7 @@ class BmpPatternParser extends BasePatternParser {
             return c;
         } else if (c == '\\') {
             next();
-            c = required(regExpUnicodeEscapeSequence());
+            c = regExpUnicodeEscapeSequenceRequired();
             if (isRegExpIdentifierStart((char) c)) {
                 return c;
             }
@@ -519,7 +520,7 @@ class BmpPatternParser extends BasePatternParser {
             return c;
         } else if (c == '\\') {
             next();
-            c = required(regExpUnicodeEscapeSequence());
+            c = regExpUnicodeEscapeSequenceRequired();
             if (isRegExpIdentifierPart((char) c)) {
                 return c;
             }
@@ -532,6 +533,17 @@ class BmpPatternParser extends BasePatternParser {
             throw syntaxError(Message.thatCapuringGroupNameIsInvalid());
         }
         return -1;
+    }
+
+    private int regExpUnicodeEscapeSequenceRequired() {
+        if (!hasNext()) {
+            throw syntaxError(Message.thatPatternEndsWith('\\'));
+        }
+        final int c = regExpUnicodeEscapeSequence();
+        if (c < 0) {
+            throw syntaxError(Message.thatEscapeSequenceIsUnsupported());
+        }
+        return c;
     }
 
     @Production("RegExpUnicodeEscapeSequence")
@@ -708,7 +720,7 @@ class BmpPatternParser extends BasePatternParser {
             if (hasNext()) {
                 return classEscape();
             } else {
-                throw syntaxError();
+                throw syntaxError(Message.thatPatternEndsWith('\\'));
             }
         } else if (c == ']' || c == '-') {
             return -1;
@@ -737,7 +749,7 @@ class BmpPatternParser extends BasePatternParser {
             return character;
         }
 
-        throw syntaxError();
+        throw syntaxError(Message.thatEscapeSequenceInCharacterClassIsInvalid());
     }
 
     /**
@@ -874,7 +886,7 @@ class BmpPatternParser extends BasePatternParser {
                 return Character.toCodePoint(high, low);
             }
         }
-        throw syntaxError();
+        throw syntaxError(Message.thatSurrogatePairIsInvalid());
     }
 
     private void beginCapturingGroup() {
@@ -1011,10 +1023,7 @@ class BmpPatternParser extends BasePatternParser {
         }
     }
 
-    private int required(int value) {
-        if (value < 0) {
-            throw syntaxError();
-        }
-        return value;
+    protected final SyntaxError unexpectedChar(int cp) {
+        return syntaxError(Message.thatUnexpectedCharIsFound());
     }
 }

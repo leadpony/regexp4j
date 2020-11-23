@@ -16,12 +16,25 @@
 package org.leadpony.regexp4j;
 
 /**
+ * An input source to parsers.
+ *
  * @author leadpony
  */
 interface InputSource {
 
+    /**
+     * Checks if this input source has next character or not.
+     *
+     * @return {@code true} if there exists next character.
+     */
     boolean hasNext();
 
+    /**
+     * Returns the next character.
+     *
+     * @return the next character.
+     * @throws NoSuchElementException if next character is not available.
+     */
     int next();
 
     default int peek() {
@@ -41,7 +54,21 @@ interface InputSource {
      */
     int available();
 
+    /**
+     * Returns the current index.
+     *
+     * @return the current index in code units starting from zero.
+     */
+    int index();
+
     void mark();
 
     void reset();
+
+    /**
+     * Returns the original text given to this source.
+     * @return the original text
+     */
+    @Override
+    String toString();
 }

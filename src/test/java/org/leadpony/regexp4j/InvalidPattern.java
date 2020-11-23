@@ -19,6 +19,10 @@ package org.leadpony.regexp4j;
  * @author leadpony
  */
 public enum InvalidPattern {
+    NOTHING_TO_REPEAT_ONCE("?"),
+    NOTHING_TO_REPEAT_ZERO_OR_MORE("*"),
+    NOTHING_TO_REPEAT_ONE_OR_MORE("+"),
+
     // lookaround
     UNTERMINATED_POSITIVE_LOOKAHEAD("(?=abc"),
     UNTERMINATED_NEGATIVE_LOOKAHEAD("(?!abc"),
@@ -27,11 +31,14 @@ public enum InvalidPattern {
 
     // escape
     ENDS_WITH_REVERSE_SOLIDUS("\\"),
-    EMPTY_UNICODE_ESCAPE_SEQUENCE("(?<\\u>)"),
-    INCOMPLETE_UNICODE_ESCAPE_SEQUENCE("(?<\\u004>)"),
+    NO_CONTROL_LETTER("\\c"),
+    ILLEGAL_CONTROL_LETTER("\\c1"),
     EMPTY_HEX_ESCAPE_SEQUENCE("\\x"),
     SHORT_HEX_ESCAPE_SEQUENCE("\\x4"),
     DIGIT_FOLLOWS_NULL_ESCAPE("\\01"),
+    INVALID_ATOM_ESCAPE("\\e"),
+    EMPTY_UNICODE_ESCAPE_SEQUENCE("(?<\\u>)"),
+    INCOMPLETE_UNICODE_ESCAPE_SEQUENCE("(?<\\u004>)"),
 
     // group
     UNTERMINATED_GROUP("(abc"),
@@ -45,8 +52,12 @@ public enum InvalidPattern {
     DUPLICATE_GROUP_NAME("(?<name1>abc)(?<name1>xyz)"),
     INVALID_GROUP_NAME_START("(?<\\u0040>abc)"),
     INVALID_GROUP_NAME_CONTINUE("(?<$\\u0040>abc)"),
+    UNTERMINATED_ESCAPE_IN_GROUP_NAME("(?<\\"),
+    INVALID_ESCAPE_IN_GROUP_NAME("(?<\\a>abc)"),
     INVALID_GROUP_NAME_START_WITH_SURROGATE_PAIR("(?<\uD834\uDD1E>abc)"),
     INVALID_GROUP_NAME_CONTINUE_WITH_SURROGATE_PAIR("(?<$\uD834\uDD1E>abc)"),
+    UNTERMINATED_SURROGATE_PAIR("(?<\uD834"),
+    INVALID_SURROGATE_PAIR("(?<\uD834\u0041>abc)"),
 
     // name back reference
     NO_GROUP_REFERENCE("(?<name1>abc)\\k"),
@@ -62,6 +73,9 @@ public enum InvalidPattern {
 
     // character class
     UNTERMINATED_CLASS_RANGE("[a-z"),
+    ESCAPED_END_OF_CLASS_RANGE("[\\]"),
+    INVALID_CLASS_ESCAPE("[\\k]"),
+    UNTERMINATED_CLASS_ESCAPE("[\\"),
     CLASS_RANGE_OUT_OF_ORDER("[z-a]"),
     CHARACTER_CLASS_ESCAPE_AS_LOWER_CLASS_RANGE("[\\d-9]"),
     CHARACTER_CLASS_ESCAPE_AS_UPPER_CLASS_RANGE("[1-\\d]");
