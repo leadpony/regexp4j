@@ -111,8 +111,8 @@ public class RegExpTest {
     @EnumSource(ExecTestCase.class)
     public void execShouldReturnMatchedResults(ExecTestCase test) {
         RegExp re = new RegExp(test.pattern);
-        String[] results = re.exec(test.input);
-        assertThat(results).isEqualTo(test.expected);
+        String[] actual = re.exec(test.input);
+        assertThat(actual).isEqualTo(test.expected);
     }
 
     @Test
@@ -134,6 +134,33 @@ public class RegExpTest {
 
         results = re.exec(input);
         assertThat(results).isNull();
+    }
+
+    public enum ReplaceTestCase {
+        REPLACE_FIRST("dog", "", "zzzdogzzzdogzzz", "cat", "zzzcatzzzdogzzz"),
+        REPLACE_ALL("a*b", "g", "aabfooaabfooabfoob", "-", "-foo-foo-foo-");
+
+        final String pattern;
+        final String flags;
+        final String input;
+        final String replacement;
+        final String expected;
+
+        ReplaceTestCase(String pattern, String flags, String input, String replacement, String expected) {
+            this.pattern = pattern;
+            this.flags = flags;
+            this.input = input;
+            this.replacement = replacement;
+            this.expected = expected;
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(ReplaceTestCase.class)
+    public void replaceShouldReturnReplacedString(ReplaceTestCase test) {
+        RegExp re = new RegExp(test.pattern, test.flags);
+        String actual = re.replace(test.input, test.replacement);
+        assertThat(actual).isEqualTo(test.expected);
     }
 
     public enum StringTestCase {

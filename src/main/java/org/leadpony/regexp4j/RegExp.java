@@ -99,7 +99,8 @@ public final class RegExp {
      * Returns whether to test the regular expression against all possible matches
      * in a string, or only against the first.
      *
-     * @return {@code true} if the global search is enabled, {@code false} otherwise.
+     * @return {@code true} if the global search is enabled, {@code false}
+     *         otherwise.
      */
     public boolean isGlobal() {
         return flags.contains(RegExpFlag.GLOBAL);
@@ -117,7 +118,8 @@ public final class RegExp {
     /**
      * Returns whether or not to search in strings across multiple lines.
      *
-     * @return {@code true} if the multiline search is enabled, {@code false} otherwise.
+     * @return {@code true} if the multiline search is enabled, {@code false}
+     *         otherwise.
      */
     public boolean isMultiline() {
         return flags.contains(RegExpFlag.MULTILINE);
@@ -145,7 +147,8 @@ public final class RegExp {
     /**
      * Returns whether or not the search is sticky.
      *
-     * @return {@code true} if the sticky search is enabled, {@code false} otherwise.
+     * @return {@code true} if the sticky search is enabled, {@code false}
+     *         otherwise.
      */
     public boolean isSticky() {
         return flags.contains(RegExpFlag.STICKY);
@@ -213,6 +216,24 @@ public final class RegExp {
             }
         }
         return null;
+    }
+
+    /**
+     * Replaces the subsequence of the input sequence that matches the pattern with
+     * the given replacement string.
+     *
+     * @param string       the string to be replaced.
+     * @param replaceValue the replacement string.
+     * @return The string constructed by replacing the matching subsequence by the
+     *         replacement string, substituting captured subsequences as needed
+     */
+    public String replace(String string, String replaceValue) {
+        Matcher matcher = matcher(string);
+        if (isGlobal()) {
+            return matcher.replaceAll(replaceValue);
+        } else {
+            return matcher.replaceFirst(replaceValue);
+        }
     }
 
     /**
