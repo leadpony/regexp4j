@@ -633,11 +633,11 @@ class BmpPatternParser extends BasePatternParser {
         }
         visitor.visitClassStart(negated);
 
-        classRanges();
+        final boolean empty = !classRanges();
 
         if (hasNext(']')) {
             next();
-            visitor.visitClassEnd();
+            visitor.visitClassEnd(empty);
             return true;
         } else {
             throw syntaxError(Message.thatCharacterClassIsUnterminated());
@@ -648,9 +648,12 @@ class BmpPatternParser extends BasePatternParser {
      * Multiple class ranges.
      */
     @Production("ClassRanges")
-    private void classRanges() {
+    private boolean classRanges() {
+        boolean found = false;
         while (hasNext() && nonemptyClassRanges()) {
+            found = true;
         }
+        return found;
     }
 
     /**

@@ -178,8 +178,12 @@ class PatternTranslator implements PatternVisitor {
     }
 
     @Override
-    public void visitClassEnd() {
-        builder.append(']');
+    public void visitClassEnd(boolean empty) {
+        if (empty) {
+            builder.append("x&&[^x]]");
+        } else {
+            builder.append(']');
+        }
     }
 
     @Override

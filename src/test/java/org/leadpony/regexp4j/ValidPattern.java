@@ -52,6 +52,7 @@ public enum ValidPattern {
 
     CHARACTER_CLASS("[a-z]"),
     CHARACTER_CLASS_NEGATED("[^a-z]"),
+    EMPTY_CHARACTER_CLASS("[]", "[x&&[^x]]"),
 
     HYPHEN_IN_CHARACTER_CLASS("[-]"),
     HYPHEN_IN_NEGATED_CHARACTER_CLASS("[^-]"),
