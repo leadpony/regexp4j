@@ -95,6 +95,9 @@ interface PatternVisitor {
     default void visitHexEscapeSequence(char high, char low) {
     }
 
+    default void visitUnicodeEscapeSequence(char c) {
+    }
+
     default void visitControlLetter(char c) {
     }
 

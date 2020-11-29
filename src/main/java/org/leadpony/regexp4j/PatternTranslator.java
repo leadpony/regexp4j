@@ -203,6 +203,11 @@ class PatternTranslator implements PatternVisitor {
     }
 
     @Override
+    public void visitUnicodeEscapeSequence(char c) {
+        builder.append("\\u").append(String.format("%04x", (int) c));
+    }
+
+    @Override
     public void visitControlLetter(char c) {
         builder.append('\\').append('c');
         if ('A' <= c && c <= 'Z') {

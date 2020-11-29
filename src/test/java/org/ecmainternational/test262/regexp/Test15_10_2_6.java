@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.leadpony.regexp4j.RegExp;
 
-public class Test15_10_6 {
+public class Test15_10_2_6 {
 
     @Test
     @DisplayName("15.10.2.6_A1_T1")

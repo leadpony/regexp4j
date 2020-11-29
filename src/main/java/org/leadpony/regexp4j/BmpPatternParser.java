@@ -497,7 +497,7 @@ class BmpPatternParser extends BasePatternParser {
             return c;
         } else if (c == '\\') {
             next();
-            c = regExpUnicodeEscapeSequenceRequired();
+            c = regExpUnicodeEscapeSequenceInGroupName();
             if (isRegExpIdentifierStart((char) c)) {
                 return c;
             }
@@ -520,7 +520,7 @@ class BmpPatternParser extends BasePatternParser {
             return c;
         } else if (c == '\\') {
             next();
-            c = regExpUnicodeEscapeSequenceRequired();
+            c = regExpUnicodeEscapeSequenceInGroupName();
             if (isRegExpIdentifierPart((char) c)) {
                 return c;
             }
@@ -535,17 +535,6 @@ class BmpPatternParser extends BasePatternParser {
         return -1;
     }
 
-    private int regExpUnicodeEscapeSequenceRequired() {
-        if (!hasNext()) {
-            throw syntaxError(Message.thatPatternEndsWith('\\'));
-        }
-        final int c = regExpUnicodeEscapeSequence();
-        if (c < 0) {
-            throw syntaxError(Message.thatEscapeSequenceIsUnsupported());
-        }
-        return c;
-    }
-
     @Production("RegExpUnicodeEscapeSequence")
     private int regExpUnicodeEscapeSequence() {
         if (!hasNext('u')) {
@@ -553,7 +542,28 @@ class BmpPatternParser extends BasePatternParser {
         }
         // skips 'u'
         next();
-        return hex4Digits();
+        final int c = hex4Digits();
+        if (c >= 0) {
+            visitor.visitUnicodeEscapeSequence((char) c);
+        }
+        return c;
+    }
+
+    @Production("RegExpUnicodeEscapeSequence")
+    private int regExpUnicodeEscapeSequenceInGroupName() {
+        if (!hasNext()) {
+            throw syntaxError(Message.thatPatternEndsWith('\\'));
+        }
+
+        if (peek() == 'u') {
+            // skips 'u'
+            next();
+            final int c = hex4Digits();
+            if (c >= 0) {
+                return c;
+            }
+        }
+        throw syntaxError(Message.thatEscapeSequenceIsUnsupported());
     }
 
     @Production("IdentityEscape")
