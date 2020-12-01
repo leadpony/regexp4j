@@ -23,6 +23,12 @@ import java.util.regex.Pattern;
  */
 class PatternTranslator implements PatternVisitor {
 
+    enum Context {
+        NORMAL,
+        CHARACTER_CLASS,
+        NEGATED_CHARACTER_CLASS
+    }
+
     /*
      * Whitespace: U+0009, U+000B, U+000C, U+0020, U+0009, U+00a0, U+FEFF, and other Space_Separator(Zs)
      * Line Terminator: U+000A, U+000D, U+2028, U+2029
@@ -36,6 +42,8 @@ class PatternTranslator implements PatternVisitor {
     protected final StringBuilder builder = new StringBuilder();
 
     private final int options;
+
+    private Context context = Context.NORMAL;
 
     PatternTranslator(Set<RegExpFlag> flags) {
         int options = 0;
@@ -171,19 +179,33 @@ class PatternTranslator implements PatternVisitor {
 
     @Override
     public void visitClassStart(boolean negated) {
-        builder.append('[');
         if (negated) {
-            builder.append('^');
+            builder.append("[^");
+            context = Context.NEGATED_CHARACTER_CLASS;
+        } else {
+            builder.append('[');
+            context = Context.CHARACTER_CLASS;
         }
     }
 
     @Override
     public void visitClassEnd(boolean empty) {
-        if (empty) {
-            builder.append("x&&[^x]]");
-        } else {
-            builder.append(']');
+        switch (context) {
+        case CHARACTER_CLASS:
+            if (empty) {
+                builder.append("x&&[^x]");
+            }
+            break;
+        case NEGATED_CHARACTER_CLASS:
+            if (empty) {
+                builder.append("x[^x]");
+            }
+            break;
+        default:
+            throw new IllegalStateException();
         }
+        builder.append(']');
+        context = Context.NORMAL;
     }
 
     @Override
