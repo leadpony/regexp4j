@@ -183,4 +183,91 @@ public class Test15_10_2_13 {
         String[] expected = {"aY "};
         assertThat(actual).isEqualTo(expected);
     }
+
+    /*---
+    info: |
+        The production CharacterClass :: [ ^ ClassRanges ] evaluates by
+        evaluating ClassRanges to  obtain a CharSet and returning that CharSet
+        and the boolean true
+    es5id: 15.10.2.13_A2_T4
+    description: Execute /[^\b]+/g.exec("easy\bto\u0008ride") and check results
+    ---*/
+    @Test
+    @DisplayName("15.10.2.13_A2_4")
+    public void A2_T4() {
+        RegExp re = new RegExp("[^\\b]+", "g");
+        String[] actual = re.exec("easy\bto\u0008ride");
+        String[] expected = {"easy"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.13_A2_5")
+    public void A2_T5() {
+        RegExp re = new RegExp("a[^1-9]c");
+        String[] actual = re.exec("abc");
+        String[] expected = {"abc"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.13_A2_6")
+    public void A2_T6() {
+        RegExp re = new RegExp("a[^b]c");
+        assertThat(re.test("abc")).isFalse();
+    }
+
+    @Test
+    @DisplayName("15.10.2.13_A2_7")
+    public void A2_T7() {
+        RegExp re = new RegExp("[^a-z]{4}");
+        String[] actual = re.exec("abc#$%def%&*@ghi");
+        String[] expected = {"%&*@"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.13_A2_8")
+    public void A2_T8() {
+        RegExp re = new RegExp("[^]");
+        String[] actual = re.exec("abc#$%def%&*@ghi");
+        String[] expected = {"a"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.13_A3_1")
+    public void A3_T1() {
+        RegExp re = new RegExp(".[\\b].");
+        String[] actual = re.exec("abc\bdef");
+        String[] expected = {"c\bd"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.13_A3_2")
+    public void A3_T2() {
+        RegExp re = new RegExp("c[\\b]{3}d");
+        String[] actual = re.exec("abc\b\b\bdef");
+        String[] expected = {"c\b\b\bd"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.13_A3_3")
+    public void A3_T3() {
+        RegExp re = new RegExp("[^\\[\\b\\]]+");
+        String[] actual = re.exec("abc\bdef");
+        String[] expected = {"abc"};
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("15.10.2.13_A3_4")
+    public void A3_T4() {
+        RegExp re = new RegExp("[^\\[\\b\\]]+");
+        String[] actual = re.exec("abcdef");
+        String[] expected = {"abcdef"};
+        assertThat(actual).isEqualTo(expected);
+    }
 }

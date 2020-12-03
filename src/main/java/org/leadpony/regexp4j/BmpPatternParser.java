@@ -750,6 +750,7 @@ class BmpPatternParser extends BasePatternParser {
     private int classEscape() {
         if (peek() == 'b') {
             next();
+            visitor.visitCharacter('\u0008');
             return '\u0008';
         }
 

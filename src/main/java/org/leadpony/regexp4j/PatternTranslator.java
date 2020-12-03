@@ -198,7 +198,8 @@ class PatternTranslator implements PatternVisitor {
             break;
         case NEGATED_CHARACTER_CLASS:
             if (empty) {
-                builder.append("x[^x]");
+                // after [^
+                builder.append("x[x]");
             }
             break;
         default:
