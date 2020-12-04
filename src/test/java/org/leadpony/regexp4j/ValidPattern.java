@@ -74,8 +74,8 @@ public enum ValidPattern {
     CHARACTER_CLASS_ESCAPE_NONDIGIT("\\D"),
     CHARACTER_CLASS_ESCAPE_WORD("\\w"),
     CHARACTER_CLASS_ESCAPE_NONWORD("\\W"),
-    CHARACTER_CLASS_ESCAPE_WHITESPACE("\\s", "[\\h\\f\\n\\r\\u000b​\\u2028\\u2029\\ufeff]"),
-    CHARACTER_CLASS_ESCAPE_NONWHITESPACE("\\S", "[^\\h\\f\\n\\r\\u000b​\\u2028\\u2029\\ufeff]"),
+    CHARACTER_CLASS_ESCAPE_WHITESPACE("\\s", "[\\u0009\\u000b\\u000c\\u0020\\u00a0\\ufeff\\u1680\\u2000-\\u200a\\u202f\\u205f\\u3000\\u000a\\u000d\\u2028\\u2029]"),
+    CHARACTER_CLASS_ESCAPE_NONWHITESPACE("\\S", "[^\\u0009\\u000b\\u000c\\u0020\\u00a0\\ufeff\\u1680\\u2000-\\u200a\\u202f\\u205f\\u3000\\u000a\\u000d\\u2028\\u2029]"),
 
     IDENTITY_ESCAPE("\\\\"),
 

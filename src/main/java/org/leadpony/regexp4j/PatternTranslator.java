@@ -28,9 +28,18 @@ class PatternTranslator implements PatternVisitor {
 
     /*
      * Whitespace: U+0009, U+000B, U+000C, U+0020, U+0009, U+00a0, U+FEFF, and other
-     * Space_Separator(Zs) Line Terminator: U+000A, U+000D, U+2028, U+2029
+     * Space_Separator(Zs)
+     *
+     * Line Terminator: U+000A, U+000D, U+2028, U+2029
      */
-    private static final String WHITESPACE_CHARACTERS = "\\h\\f\\n\\r\\u000b​\\u2028\\u2029\\ufeff";
+    private static final String WHITESPACE_CHARACTERS =
+            // Whitespace
+            "\\u0009\\u000b\\u000c\\u0020\\u00a0\\ufeff"
+            // Space_Separator (Zs)
+            // \\p{gc=Zs}
+            + "\\u1680\\u2000-\\u200a\\u202f\\u205f\\u3000"
+            // Line Terminator
+            + "\\u000a\\u000d\\u2028\\u2029";
 
     private static final String WHITESPACE_CHARACTER_CLASS = "[" + WHITESPACE_CHARACTERS + "]";
 

@@ -1,5 +1,8 @@
 // Copyright (c) 2012 Ecma International.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
+
+// Copyright 2009 the Sputnik authors.  All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
 package org.ecmainternational.test262.regexp;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,5 +53,21 @@ public class Test15_10_4_1 {
     @DisplayName("15.10.4.1-4")
     public void test4() {
         new RegExp("abc", "gim");
+    }
+
+    /*---
+    info: |
+        pattern is an object R whose [[Class]] property is "RegExp" and flags
+        is not undefined
+    es5id: 15.10.4.1_A2_T1
+    description: >
+        Checking if execution of "new RegExp(pattern, "i")", where the
+        pattern is "/\u0042/i", does not fail
+    ---*/
+    @Test
+    @DisplayName("15.10.4.1_A2_T1")
+    public void A2_T1() {
+        RegExp re = new RegExp("\\u0042", "i");
+        assertThat(re.isIgnoreCase()).isTrue();
     }
 }
