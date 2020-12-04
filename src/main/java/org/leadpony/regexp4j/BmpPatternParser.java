@@ -631,17 +631,25 @@ class BmpPatternParser extends BasePatternParser {
         if (negated) {
             next();
         }
+
+        // In case character class is empty
+        if (hasNext(']')) {
+            next();
+            visitor.visitEmptyClass(negated);
+            return true;
+        }
+
         visitor.visitClassStart(negated);
 
-        final boolean empty = !classRanges();
+        classRanges();
 
         if (hasNext(']')) {
             next();
-            visitor.visitClassEnd(empty);
+            visitor.visitClassEnd();
             return true;
-        } else {
-            throw syntaxError(Message.thatCharacterClassIsUnterminated());
         }
+
+        throw syntaxError(Message.thatCharacterClassIsUnterminated());
     }
 
     /**

@@ -81,7 +81,10 @@ interface PatternVisitor {
     default void visitClassStart(boolean negated) {
     }
 
-    default void visitClassEnd(boolean empty) {
+    default void visitClassEnd() {
+    }
+
+    default void visitEmptyClass(boolean negated) {
     }
 
     default void visitRangeDash() {

@@ -19,19 +19,16 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
+ * A visitor who will translate the pattern into a {@link Pattern} object in
+ * Java.
+ *
  * @author leadpony
  */
 class PatternTranslator implements PatternVisitor {
 
-    enum Context {
-        NORMAL,
-        CHARACTER_CLASS,
-        NEGATED_CHARACTER_CLASS
-    }
-
     /*
-     * Whitespace: U+0009, U+000B, U+000C, U+0020, U+0009, U+00a0, U+FEFF, and other Space_Separator(Zs)
-     * Line Terminator: U+000A, U+000D, U+2028, U+2029
+     * Whitespace: U+0009, U+000B, U+000C, U+0020, U+0009, U+00a0, U+FEFF, and other
+     * Space_Separator(Zs) Line Terminator: U+000A, U+000D, U+2028, U+2029
      */
     private static final String WHITESPACE_CHARACTERS = "\\h\\f\\n\\r\\u000b​\\u2028\\u2029\\ufeff";
 
@@ -42,8 +39,6 @@ class PatternTranslator implements PatternVisitor {
     protected final StringBuilder builder = new StringBuilder();
 
     private final int options;
-
-    private Context context = Context.NORMAL;
 
     PatternTranslator(Set<RegExpFlag> flags) {
         int options = 0;
@@ -181,32 +176,23 @@ class PatternTranslator implements PatternVisitor {
     public void visitClassStart(boolean negated) {
         if (negated) {
             builder.append("[^");
-            context = Context.NEGATED_CHARACTER_CLASS;
         } else {
             builder.append('[');
-            context = Context.CHARACTER_CLASS;
         }
     }
 
     @Override
-    public void visitClassEnd(boolean empty) {
-        switch (context) {
-        case CHARACTER_CLASS:
-            if (empty) {
-                builder.append("x&&[^x]");
-            }
-            break;
-        case NEGATED_CHARACTER_CLASS:
-            if (empty) {
-                // after [^
-                builder.append("x[x]");
-            }
-            break;
-        default:
-            throw new IllegalStateException();
-        }
+    public void visitClassEnd() {
         builder.append(']');
-        context = Context.NORMAL;
+    }
+
+    @Override
+    public void visitEmptyClass(boolean negated) {
+        if (negated) {
+            builder.append("[a[^a]]");
+        } else {
+            builder.append("[a&&[^a]]");
+        }
     }
 
     @Override
