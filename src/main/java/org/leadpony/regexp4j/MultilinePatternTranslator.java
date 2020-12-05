@@ -24,8 +24,8 @@ import java.util.Set;
  */
 class MultilinePatternTranslator extends PatternTranslator {
 
-    MultilinePatternTranslator(Set<RegExpFlag> flags) {
-        super(flags);
+    MultilinePatternTranslator(String source, Set<RegExpFlag> flags) {
+        super(source, flags);
     }
 
     @Override

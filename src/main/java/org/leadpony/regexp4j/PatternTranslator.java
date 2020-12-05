@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * A visitor who will translate the pattern into a {@link Pattern} object in
@@ -47,6 +48,7 @@ class PatternTranslator implements PatternVisitor {
 
     private static final String NONWHITESPACE_CHARACTER_CLASS = "[^" + WHITESPACE_CHARACTERS + "]";
 
+    private final String source;
     private final int options;
 
     protected final StringBuilder builder = new StringBuilder();
@@ -54,7 +56,7 @@ class PatternTranslator implements PatternVisitor {
     private final Map<String, Integer> groupNames = new HashMap<>();
     private int groupIndex;
 
-    PatternTranslator(Set<RegExpFlag> flags) {
+    PatternTranslator(String source, Set<RegExpFlag> flags) {
         int options = 0;
         if (flags.contains(RegExpFlag.IGNORE_CASE)) {
             options |= Pattern.CASE_INSENSITIVE;
@@ -62,6 +64,7 @@ class PatternTranslator implements PatternVisitor {
         if (flags.contains(RegExpFlag.MULTILINE)) {
             options |= Pattern.MULTILINE;
         }
+        this.source = source;
         this.options = options;
     }
 
@@ -69,10 +72,19 @@ class PatternTranslator implements PatternVisitor {
      * Returns the translated pattern.
      *
      * @return the translated pattern.
-     * @throws PatternSyntaxException if the compilation failed.
+     * @throws SyntaxError if the compilation failed.
      */
     Pattern getPattern() {
-        return Pattern.compile(builder.toString(), options);
+        try {
+            return Pattern.compile(builder.toString(), options);
+        } catch (PatternSyntaxException e) {
+            throw new SyntaxError(Message.thatInternalErrorOccurred(),
+                    source, -1, e);
+        }
+    }
+
+    Map<String, Integer> getGroupNames() {
+        return groupNames;
     }
 
     @Override

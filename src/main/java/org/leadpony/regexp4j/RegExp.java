@@ -15,10 +15,10 @@
  */
 package org.leadpony.regexp4j;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * A {@code RegExp} object contains a regular expression and the associated
@@ -35,6 +35,8 @@ public final class RegExp {
     private final Set<RegExpFlag> flags;
 
     private final Pattern pattern;
+    private final Map<String, Integer> groupNames;
+
     private int lastIndex;
 
     /**
@@ -67,14 +69,9 @@ public final class RegExp {
         this.source = pattern;
         this.flags = flagSet;
 
-        String source = getSource();
-        try {
-            PatternTranslator translator = translatePattern(source, flagSet);
-            this.pattern = translator.getPattern();
-        } catch (PatternSyntaxException e) {
-            throw new SyntaxError(Message.thatInternalErrorOccurred(),
-                    source, -1, e);
-        }
+        PatternTranslator translator = translatePattern(getSource(), flagSet);
+        this.pattern = translator.getPattern();
+        this.groupNames = translator.getGroupNames();
     }
 
     /**
@@ -204,23 +201,37 @@ public final class RegExp {
 
     /**
      * Performs a regular expression match of {@code string} against the regular
-     * expression and returns an array object containing the results of the match,
-     * or {@code null} if string did not match.
+     * expression and returns an array object containing the result of the match, or
+     * {@code null} if string did not match.
      *
      * @param string the input text to check.
-     * @return the results of the match, or {@code null} if the {@code string} did
-     *         not match.
+     * @return the result of the match as an array, or {@code null} if the
+     *         {@code string} did not match.
      */
     public String[] exec(String string) {
+        ExecResult result = execForResult(string);
+        return (result != null) ? result.asArray() : null;
+    }
+
+    /**
+     * Performs a regular expression match of {@code string} against the regular
+     * expression and returns an {@link ExecResult} object containing the result of
+     * the match, or {@code null} if string did not match.
+     *
+     * @param string the input text to check.
+     * @return the result of the match as an {@link ExecResult} object, or
+     *         {@code null} if the {@code string} did not match.
+     */
+    public ExecResult execForResult(String string) {
         Matcher matcher = matcher(string);
         if (isGlobal() || isSticky()) {
             if (matcher.find(lastIndex)) {
                 this.lastIndex = matcher.end();
-                return getMatcherResults(matcher);
+                return createExecResult(string, matcher);
             }
         } else {
             if (matcher.find()) {
-                return getMatcherResults(matcher);
+                return createExecResult(string, matcher);
             }
         }
         return null;
@@ -260,12 +271,8 @@ public final class RegExp {
         return pattern.matcher(string);
     }
 
-    private static String[] getMatcherResults(Matcher matcher) {
-        String[] results = new String[1 + matcher.groupCount()];
-        for (int i = 0; i < results.length; i++) {
-            results[i] = matcher.group(i);
-        }
-        return results;
+    private ExecResult createExecResult(String string, Matcher matcher) {
+        return new ExecResult(string, matcher, this.groupNames);
     }
 
     /**
@@ -277,7 +284,7 @@ public final class RegExp {
      * @throws SyntaxError if syntax error was found in the pattern.
      */
     static PatternTranslator translatePattern(String pattern, Set<RegExpFlag> flags) {
-        PatternTranslator translator = createTranslator(flags);
+        PatternTranslator translator = createTranslator(pattern, flags);
         parsePattern(pattern, flags, translator);
         return translator;
     }
@@ -288,11 +295,11 @@ public final class RegExp {
         parser.parse();
     }
 
-    private static PatternTranslator createTranslator(Set<RegExpFlag> flags) {
+    private static PatternTranslator createTranslator(String pattern, Set<RegExpFlag> flags) {
         if (flags.contains(RegExpFlag.MULTILINE)) {
-            return new MultilinePatternTranslator(flags);
+            return new MultilinePatternTranslator(pattern, flags);
         } else {
-            return new PatternTranslator(flags);
+            return new PatternTranslator(pattern, flags);
         }
     }
 }

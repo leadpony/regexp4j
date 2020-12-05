@@ -6,7 +6,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -79,5 +81,14 @@ public class NonUnicodeMatchTest {
         String[] result1 = new RegExp(pattern1).exec(string);
         String[] result2 = new RegExp(pattern2).exec(string);
         assertThat(result1).isEqualTo(result2);
+    }
+
+    @Test
+    public void execForResultShouldReturnGroups() {
+        RegExp re = new RegExp("(?<a>.)(?<b>.)(?<c>.)\\k<c>\\k<b>\\k<a>");
+        Map<String, String> groups = re.execForResult("abccba").groups();
+        assertThat(groups.get("a")).isEqualTo("a");
+        assertThat(groups.get("b")).isEqualTo("b");
+        assertThat(groups.get("c")).isEqualTo("c");
     }
 }
