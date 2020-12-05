@@ -20,7 +20,7 @@ package org.leadpony.regexp4j;
  */
 public enum ValidPattern {
     INPUT_START("^"),
-    INPUT_END("$", "\\z"),
+    INPUT_END("$", false),
     WORD_BOUNDARY("\\b"),
     NONWORD_BOUNDARY("\\B"),
 
@@ -32,8 +32,8 @@ public enum ValidPattern {
     ANY("."),
 
     CAPRUING_GROUP("(abc)"),
-    NAMED_CAPTURING_GROUP("(?<name1>abc)"),
-    NAMED_CAPTURING_GROUP_WITH_ESCAPE("(?<\\u0041>abc)", "(?<A>abc)"),
+    NAMED_CAPTURING_GROUP("(?<name1>abc)", false),
+    NAMED_CAPTURING_GROUP_WITH_ESCAPE("(?<\\u0041>abc)", false),
     NONCAPTURING_GROUP("(?:abc)"),
 
     ZERO_OR_ONE("a?"),
@@ -48,56 +48,56 @@ public enum ValidPattern {
     LOWER_QUANTIFIER("a{3,}"),
     BOUNDS_QUANTIFIER("a{3,5}"),
 
-    NAMED_CAPTURING_GROUP_REFERENCE("(?<name1>abc)\\k<name1>"),
+    NAMED_CAPTURING_GROUP_REFERENCE("(?<name1>abc)\\k<name1>", false),
 
     CHARACTER_CLASS("[a-z]"),
     CHARACTER_CLASS_NEGATED("[^a-z]"),
-    EMPTY_CHARACTER_CLASS("[]", "[a&&[^a]]"),
+    EMPTY_CHARACTER_CLASS("[]", false),
 
     HYPHEN_IN_CHARACTER_CLASS("[-]"),
     HYPHEN_IN_NEGATED_CHARACTER_CLASS("[^-]"),
 
     ESCAPED_TAB("\\t"),
     ESCAPED_NEWLINE("\\n"),
-    ESCAPED_VERTICAL_TAB("\\v", "\\x0b"),
+    ESCAPED_VERTICAL_TAB("\\v", false),
     ESCAPED_FORM_FEED("\\f"),
     ESCAPED_RETURN("\\r"),
 
     CONTROL_LETTER("\\cA"),
-    CONTROL_LETTER_LOWER_CASE("\\ca", "\\cA"),
+    CONTROL_LETTER_LOWER_CASE("\\ca", false),
 
     DECIMAL_ESCAPE("(abc)\\1"),
     HEX_ESCAPE_SEQUENCE("\\x3f"),
-    NULL_ESCAPE("\\0", "\\00"),
+    NULL_ESCAPE("\\0", false),
 
     CHARACTER_CLASS_ESCAPE_DIGIT("\\d"),
     CHARACTER_CLASS_ESCAPE_NONDIGIT("\\D"),
     CHARACTER_CLASS_ESCAPE_WORD("\\w"),
     CHARACTER_CLASS_ESCAPE_NONWORD("\\W"),
-    CHARACTER_CLASS_ESCAPE_WHITESPACE("\\s", "[\\u0009\\u000b\\u000c\\u0020\\u00a0\\ufeff\\u1680\\u2000-\\u200a\\u202f\\u205f\\u3000\\u000a\\u000d\\u2028\\u2029]"),
-    CHARACTER_CLASS_ESCAPE_NONWHITESPACE("\\S", "[^\\u0009\\u000b\\u000c\\u0020\\u00a0\\ufeff\\u1680\\u2000-\\u200a\\u202f\\u205f\\u3000\\u000a\\u000d\\u2028\\u2029]"),
+    CHARACTER_CLASS_ESCAPE_WHITESPACE("\\s", false),
+    CHARACTER_CLASS_ESCAPE_NONWHITESPACE("\\S", false),
 
     IDENTITY_ESCAPE("\\\\"),
 
     ALTERNATION("apple|grape|oranage");
 
     private final String pattern;
-    private final String translated;
+    private final boolean same;
 
     ValidPattern(String pattern) {
-        this(pattern, pattern);
+        this(pattern, true);
     }
 
-    ValidPattern(String pattern, String translated) {
+    ValidPattern(String pattern, boolean same) {
         this.pattern = pattern;
-        this.translated = translated;
+        this.same = same;
     }
 
     String get() {
         return pattern;
     }
 
-    String getTranslated() {
-        return translated;
+    boolean isSame() {
+        return same;
     }
 }

@@ -66,7 +66,15 @@ public final class RegExp {
         Set<RegExpFlag> flagSet = RegExpFlag.parse(flags);
         this.source = pattern;
         this.flags = flagSet;
-        this.pattern = translatePattern(getSource(), flagSet);
+
+        String source = getSource();
+        try {
+            PatternTranslator translator = translatePattern(source, flagSet);
+            this.pattern = translator.getPattern();
+        } catch (PatternSyntaxException e) {
+            throw new SyntaxError(Message.thatInternalErrorOccurred(),
+                    source, -1, e);
+        }
     }
 
     /**
@@ -265,18 +273,13 @@ public final class RegExp {
      *
      * @param pattern the pattern in ECMAScript.
      * @param flags   the flags specified to the constructor.
-     * @return a translated pattern instance.
+     * @return the translator.
      * @throws SyntaxError if syntax error was found in the pattern.
      */
-    static Pattern translatePattern(String pattern, Set<RegExpFlag> flags) {
+    static PatternTranslator translatePattern(String pattern, Set<RegExpFlag> flags) {
         PatternTranslator translator = createTranslator(flags);
         parsePattern(pattern, flags, translator);
-        try {
-            return translator.getPattern();
-        } catch (PatternSyntaxException e) {
-            throw new SyntaxError(Message.thatInternalErrorOccurred(),
-                    pattern, -1, e);
-        }
+        return translator;
     }
 
     static void parsePattern(String pattern, Set<RegExpFlag> flags, PatternVisitor visitor) {

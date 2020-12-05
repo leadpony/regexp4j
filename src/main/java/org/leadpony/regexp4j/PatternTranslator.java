@@ -15,6 +15,8 @@
  */
 package org.leadpony.regexp4j;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -45,9 +47,12 @@ class PatternTranslator implements PatternVisitor {
 
     private static final String NONWHITESPACE_CHARACTER_CLASS = "[^" + WHITESPACE_CHARACTERS + "]";
 
+    private final int options;
+
     protected final StringBuilder builder = new StringBuilder();
 
-    private final int options;
+    private final Map<String, Integer> groupNames = new HashMap<>();
+    private int groupIndex;
 
     PatternTranslator(Set<RegExpFlag> flags) {
         int options = 0;
@@ -98,11 +103,13 @@ class PatternTranslator implements PatternVisitor {
     @Override
     public void visitCapturingGroup() {
         builder.append('(');
+        ++groupIndex;
     }
 
     @Override
     public void visitNamedCapturingGroup(String name) {
-        builder.append("(?<").append(name).append('>');
+        builder.append('(');
+        this.groupNames.put(name, ++groupIndex);
     }
 
     @Override
@@ -178,7 +185,10 @@ class PatternTranslator implements PatternVisitor {
 
     @Override
     public void visitNamedCapturingGroupReference(String name) {
-        builder.append("\\k").append('<').append(name).append('>');
+        if (groupNames.containsKey(name)) {
+            int groupIndex = groupNames.get(name);
+            builder.append('\\').append(groupIndex);
+        }
     }
 
     @Override

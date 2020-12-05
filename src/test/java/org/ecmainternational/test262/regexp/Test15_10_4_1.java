@@ -70,4 +70,60 @@ public class Test15_10_4_1 {
         RegExp re = new RegExp("\\u0042", "i");
         assertThat(re.isIgnoreCase()).isTrue();
     }
+
+    @Test
+    @DisplayName("15.10.4.1_A3_T1")
+    public void A3_T1() {
+        RegExp re = new RegExp();
+        assertThat(re.isMultiline()).isFalse();
+        assertThat(re.isGlobal()).isFalse();
+        assertThat(re.isIgnoreCase()).isFalse();
+    }
+
+    @Test
+    @DisplayName("15.10.4.1_A5_T4")
+    public void A5_T4() {
+        Throwable thrown = catchThrowable(() -> {
+            new RegExp("a|b","z");
+        });
+        assertThat(thrown).isInstanceOf(SyntaxError.class);
+    }
+
+    @Test
+    @DisplayName("15.10.4.1_A8_T1")
+    public void A8_T1() {
+        RegExp re = new RegExp("a|b", "i");
+        assertThat(re.isIgnoreCase()).isTrue();
+        assertThat(re.isMultiline()).isFalse();
+        assertThat(re.isGlobal()).isFalse();
+        assertThat(re.getLastIndex()).isEqualTo(0);
+        assertThat(re.getSource()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("15.10.4.1_A9_T1")
+    public void A9_T1() {
+        Throwable thrown = catchThrowable(() -> {
+            new RegExp("??");
+        });
+        assertThat(thrown).isInstanceOf(SyntaxError.class);
+    }
+
+    @Test
+    @DisplayName("15.10.4.1_A9_T2")
+    public void A9_T2() {
+        Throwable thrown = catchThrowable(() -> {
+            new RegExp("[{-z]");
+        });
+        assertThat(thrown).isInstanceOf(SyntaxError.class);
+    }
+
+    @Test
+    @DisplayName("15.10.4.1_A9_T3")
+    public void A9_T3() {
+        Throwable thrown = catchThrowable(() -> {
+            new RegExp("[a--z]");
+        });
+        assertThat(thrown).isInstanceOf(SyntaxError.class);
+    }
 }
