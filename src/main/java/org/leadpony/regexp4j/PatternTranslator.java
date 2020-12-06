@@ -64,6 +64,9 @@ class PatternTranslator implements PatternVisitor {
         if (flags.contains(RegExpFlag.MULTILINE)) {
             options |= Pattern.MULTILINE;
         }
+        if (flags.contains(RegExpFlag.DOT_ALL)) {
+            options |= Pattern.DOTALL;
+        }
         this.source = source;
         this.options = options;
     }
