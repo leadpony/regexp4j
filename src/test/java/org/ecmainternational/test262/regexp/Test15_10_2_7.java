@@ -4,7 +4,6 @@ package org.ecmainternational.test262.regexp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.leadpony.regexp4j.RegExp;
@@ -313,14 +312,20 @@ public class Test15_10_2_7 {
 
     @Test
     @DisplayName("15.10.2.7_A4_T5")
-    @Disabled
     public void A4_T5() {
+        RegExp re = new RegExp("[^\"]*");
+        String[] actual = re.exec("alice \042sweep\042: \"don't\"");
+        String[] expected = {"alice "};
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     @DisplayName("15.10.2.7_A4_T6")
-    @Disabled
     public void A4_T6() {
+        RegExp re = new RegExp("[\"'][^\"']*[\"']");
+        String[] actual = re.exec("alice \042sweep\042: \"don't\"");
+        String[] expected = {"\"sweep\""};
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
