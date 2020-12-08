@@ -1,4 +1,4 @@
-Copyright 2020 the RegExp authors.
+Copyright 2020 the RegExp4J authors.
 
 This software is licensed under the Apache License, Versions 2.0.
 
